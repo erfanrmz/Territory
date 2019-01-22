@@ -54,7 +54,6 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 	int i = 0;
 	FILE *address,*choice;
 	char choice_address[50];
-	struct node **current = &head;
 	struct problems info;
 	char test[200];
 	address = fopen("CHOICES.txt","r+");
@@ -72,11 +71,46 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 		fgets(info.decision1,200,choice);
 		fscanf(choice,"%d%d%d",&info.effect1[0],&info.effect1[1],&info.effect1[2]);
 		fgets(info.decision2,200,choice);
+		fgets(info.decision2,200,choice);
+//		printf("%s",info.decision2);
 		fscanf(choice,"%d%d%d",&info.effect2[0],&info.effect2[1],&info.effect2[2]);
 		info.possibility = 3;
 		create_node(info);
+		fclose(choice);
 	}
+	fclose(address);
+
 	return;
+}
+void runproblem (int numb , int *people , int *court , int *treasury)
+{
+	struct node *current = head;
+	int answer;
+	while (numb > 0)
+	{
+		current = current->next;
+		numb--;
+	}
+	printf("%s\n",current -> data.problem);
+	printf("1-%s",current -> data.decision1);
+	printf("2-%s",current -> data.decision2);
+	scanf("%d",&answer);
+	if (answer == 1)
+	{
+		*people += (current -> data.effect1[0]);
+		*court += (current -> data.effect1[1]);
+		*treasury += (current -> data.effect1[2]);
+		current -> data.possibility--;
+
+	}
+	else if (answer == 2)
+	{
+		*people += (current -> data.effect2[0]);
+		*court += (current -> data.effect2[1]);
+		*treasury += (current -> data.effect2[2]);
+		current -> data.possibility--;
+
+	}
 }
 
 int main()
@@ -94,7 +128,14 @@ int main()
 	city.court = 50;
 	city.treasury = 50;
 	readproblems();
-//	printf("%d",head->data.possibility);
+	numb = 0;
+	while (1)
+	{	
+	runproblem(numb,&city.people,&city.court,&city.treasury);
+	numb++;
+	printf("%d %d %d \n",city.people,city.court,city.treasury);
+	}
+	
 	
 
 
