@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <time.h>
 //Global Variables
 struct problems{
 	char problem[200];
@@ -48,6 +48,31 @@ void create_node(struct problems info)    // creating new node of list
 	
 	
 } 
+int random_problem() // find the problem that want to show
+{
+	int total = 0;
+	int random,r = 0,numb = 0;
+	struct node *current = head;
+	while (current -> next != NULL)
+	{
+		total += current -> data.possibility;
+		current = current -> next;
+	}
+	time_t t = time(NULL);
+	srand(t);
+	random = rand();
+	random %= total;
+	random += 1;
+	current = head;
+	while ((r) < random)
+	{
+		numb++;
+		r += current -> data.possibility;
+		current = current -> next;
+	}
+	return numb;
+
+}
 void readproblems()  //read all problems from the files that given(CHOICES.txt and "c*.txt")
 {
 
@@ -101,6 +126,7 @@ void runproblem (int numb , int *people , int *court , int *treasury)
 		*court += (current -> data.effect1[1]);
 		*treasury += (current -> data.effect1[2]);
 		current -> data.possibility--;
+		printf("%d\n",current->data.possibility);
 
 	}
 	else if (answer == 2)
@@ -109,8 +135,10 @@ void runproblem (int numb , int *people , int *court , int *treasury)
 		*court += (current -> data.effect2[1]);
 		*treasury += (current -> data.effect2[2]);
 		current -> data.possibility--;
+		printf("%d\n",current->data.possibility);
 
 	}
+
 }
 
 int main()
@@ -131,9 +159,10 @@ int main()
 	numb = 0;
 	while (1)
 	{	
-	runproblem(numb,&city.people,&city.court,&city.treasury);
-	numb++;
-	printf("%d %d %d \n",city.people,city.court,city.treasury);
+		numb = random_problem() - 1;
+
+		runproblem(numb,&city.people,&city.court,&city.treasury);
+		printf("%d %d %d \n",city.people,city.court,city.treasury);
 	}
 	
 	
