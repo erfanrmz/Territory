@@ -107,10 +107,9 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 
 	return;
 }
-void runproblem (int numb , int *people , int *court , int *treasury)
+void showproblem (int numb)
 {
 	struct node *current = head;
-	int answer;
 	while (numb > 0)
 	{
 		current = current->next;
@@ -119,32 +118,39 @@ void runproblem (int numb , int *people , int *court , int *treasury)
 	printf("%s\n",current -> data.problem);
 	printf("1-%s",current -> data.decision1);
 	printf("2-%s",current -> data.decision2);
-	scanf("%d",&answer);
-	if (answer == 1)
+
+}
+void answer_decision1 (int numb , int *people , int *court , int *treasury)
+{
+	struct node *current = head;
+	while (numb > 0)
 	{
-		*people += (current -> data.effect1[0]);
-		*court += (current -> data.effect1[1]);
-		*treasury += (current -> data.effect1[2]);
-		current -> data.possibility--;
-		printf("%d\n",current->data.possibility);
-
+		current = current->next;
+		numb--;
 	}
-	else if (answer == 2)
+	*people += (current -> data.effect1[0]);
+	*court += (current -> data.effect1[1]);
+	*treasury += (current -> data.effect1[2]);
+	current -> data.possibility--;
+}
+void answer_decision2 (int numb , int *people , int *court , int *treasury)
+{
+	struct node *current = head;
+	while (numb > 0)
 	{
-		*people += (current -> data.effect2[0]);
-		*court += (current -> data.effect2[1]);
-		*treasury += (current -> data.effect2[2]);
-		current -> data.possibility--;
-		printf("%d\n",current->data.possibility);
-
+		current = current->next;
+		numb--;
 	}
-
+	*people += (current -> data.effect2[0]);
+	*court += (current -> data.effect2[1]);
+	*treasury += (current -> data.effect2[2]);
+	current -> data.possibility--;
 }
 
 int main()
 {
-	int menu;
-	int numb;
+	int menu,answer,numb;
+	char save_choice;
 	struct satisfaction city;
 	printf("Enter your name:\n");
 	scanf("%s",King);
@@ -159,10 +165,32 @@ int main()
 	numb = 0;
 	while (1)
 	{	
+		printf("People : %d Court : %d Treasury : %d\n",city.people,city.court,city.treasury);
 		numb = random_problem() - 1;
+		showproblem(numb);
+		scanf("%d",&answer);
+		switch(answer)
+		{
+		case 0:
+			printf("Do you want to save your game ?[Y/N]\n");
+			scanf(" %c",&save_choice);
+			if (save_choice == 'y' || save_choice == 'Y')
+			{
+//				savegame();
+				printf("Your game has been saved,B-Bye\n");
 
-		runproblem(numb,&city.people,&city.court,&city.treasury);
-		printf("%d %d %d \n",city.people,city.court,city.treasury);
+			}
+			else if (save_choice == 'n' || save_choice == 'N')
+				printf("OK , GoodBye\n");
+			return 0;
+			break;
+		case 1:
+			answer_decision1(numb,&city.people,&city.court,&city.treasury);
+			break;
+		case 2:
+			answer_decision2(numb,&city.people,&city.court,&city.treasury);
+			break;
+		}	
 	}
 	
 	
