@@ -48,6 +48,34 @@ void create_node(struct problems info)    // creating new node of list
 	
 	
 } 
+void delete_node(int numb)
+{
+	printf("node deleted\n\n");
+	if(numb == 0)
+	{
+		struct node *temp = head;
+		temp = head;
+		head = temp -> next;
+		temp -> next = NULL;
+		free(temp);
+	}
+	else
+	{
+		struct node *p = head , *q;
+		int i = 1;
+		while (i < numb)
+		{
+			p = p -> next;
+			i++;
+		}
+		q = p -> next;
+		p -> next = q -> next;
+		q -> next = NULL;
+		free(q);
+
+	}
+
+}
 int random_problem() // find the problem that want to show
 {
 	int total = 0;
@@ -122,29 +150,35 @@ void showproblem (int numb)
 }
 void answer_decision1 (int numb , int *people , int *court , int *treasury)
 {
+	int i = numb;
 	struct node *current = head;
-	while (numb > 0)
+	while (i > 0)
 	{
 		current = current->next;
-		numb--;
+		i--;
 	}
 	*people += (current -> data.effect1[0]);
 	*court += (current -> data.effect1[1]);
 	*treasury += (current -> data.effect1[2]);
 	current -> data.possibility--;
+	if (current -> data.possibility == 0)
+		delete_node(numb);
 }
 void answer_decision2 (int numb , int *people , int *court , int *treasury)
 {
+	int i = numb;
 	struct node *current = head;
-	while (numb > 0)
+	while (i > 0)
 	{
 		current = current->next;
-		numb--;
+		i--;
 	}
 	*people += (current -> data.effect2[0]);
 	*court += (current -> data.effect2[1]);
 	*treasury += (current -> data.effect2[2]);
 	current -> data.possibility--;
+	if (current -> data.possibility == 0)
+		delete_node(numb);
 }
 
 int main()
