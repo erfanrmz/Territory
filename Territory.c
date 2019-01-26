@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 //Global Variables
 struct problems{
@@ -23,6 +24,15 @@ struct satisfaction
 	int people;
 	int court;
 	int treasury;
+};
+struct saveinfo
+{
+	char king_name[30];
+	int condition_save;
+	int people_save;
+	int court_save;
+	int treasury_save;
+
 };
 char King[30];
 int condition;
@@ -106,10 +116,11 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 
 	int i = 0;
 	FILE *address,*choice;
-	char choice_address[50];
+	char choice_address[200];
+	char choice_address1[200];
 	struct problems info;
 	char test[200];
-	address = fopen("CHOICES.txt","r+");
+	address = fopen("problems/CHOICES.txt","r+");
 	if (address == NULL)
 	{
 		printf("cannot open file\n");
@@ -117,7 +128,10 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 	} 
 	while(!feof(address))
 	{
-		fscanf(address,"%s",choice_address);
+		strcpy(choice_address,"problems/");
+		fscanf(address,"%s",choice_address1);
+		strcat(choice_address,choice_address1);
+		printf("%s\n",choice_address);
 		choice = fopen(choice_address,"r+");
 		i++;
 		fgets(info.problem,200,choice);
@@ -245,13 +259,13 @@ int main()
 				{
 //					savegame();
 					printf("Your game has been saved,B-Bye\n");
-					return 0;
 				}
 				else if (save_choice == 'n' || save_choice == 'N')
 				{
 					printf("OK , GoodBye\n");
-					return 0;
+					
 				}
+				return 0;
 			}
 			numb = random_problem() - 1;
 			showproblem(numb);
