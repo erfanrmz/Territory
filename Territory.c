@@ -9,8 +9,8 @@
 struct problems{
 	char problem[200];
 	char decision1[200];
-	int effect1[3];
 	char decision2[200];
+	int effect1[3];
 	int effect2[3];
 	int possibility; 
 	int code;
@@ -63,7 +63,6 @@ void create_node(struct problems info)    // creating new node of list
 } 
 void delete_node(int numb) //deleting a node from list
 {
-//	printf("node deleted\n\n");
 	if(numb == 0)
 	{
 		struct node *temp = head;
@@ -89,7 +88,7 @@ void delete_node(int numb) //deleting a node from list
 	}
 
 }
-void delete_node_load()
+void delete_node_load() //deleting the problems with zero possibility
 {
 	int i = 0;
 	struct node *current = head;
@@ -106,8 +105,7 @@ void delete_node_load()
 }
 int random_problem() // find the problem that want to show
 {
-	int total = 0;
-	int random,r = 0,numb = 0;
+	int total = 0 , random , r = 0 , numb = 0;
 	struct node *current = head;
 	while (current != NULL)
 	{
@@ -136,7 +134,6 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 	char choice_address[200];
 	char choice_address1[200];
 	struct problems info;
-	char test[200];
 	address = fopen("problems/CHOICES.txt","r+");
 	if (address == NULL)
 	{
@@ -166,7 +163,7 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 
 	return;
 }
-void showproblem (int numb)
+void showproblem (int numb) // show the problem
 {
 	struct node *current = head;
 	while (numb > 0)
@@ -244,7 +241,7 @@ int check_condition(int *people , int *court , int *treasury) //check failing
 		return 0;
 	return 1;
 }
-void savegame(int *people , int *court , int *treasury)
+void savegame(int *people , int *court , int *treasury) // save the game in a binary file
 {
 	struct saveinfo save;
 	char saveinfo_adress[200];
@@ -272,7 +269,7 @@ void savegame(int *people , int *court , int *treasury)
 	fwrite(&save, sizeof(struct saveinfo), 1, info);
 	fclose(info);
 }
-void showsaves()
+void showsaves() // show saves list
 {
 	int number = 1;
 	FILE *saves;
@@ -290,7 +287,7 @@ void showsaves()
 	number++;
 	}
 }
-void loadgame(int choose , int *people , int *court , int *treasury)
+void loadgame(int choose , int *people , int *court , int *treasury) // read information from the saved file
 {
 	int i = choose;
 	FILE *load;
@@ -324,7 +321,7 @@ void loadgame(int choose , int *people , int *court , int *treasury)
 	}
 
 }
-void shownode()
+void shownode() //showing list for testing code
 {
 	struct node *current = head;
 	while(current != NULL)
@@ -338,13 +335,14 @@ int main()
 	int menu,answer,numb,choose_load;
 	char save_choice;
 	struct satisfaction city;
-	printf("Enter your name:\n");
-	scanf("%s",King);
+	
 	printf("1.New Game\n2.Load Save\n");
 	scanf("%d",&menu);
 	switch(menu)
 	{
 	case 1:
+		printf("Enter your name:\n");
+		scanf("%s",King);
 		city.people = 50;
 		city.court = 50;
 		city.treasury = 50;
@@ -472,7 +470,6 @@ int main()
 
 			for (int i = 0 ; i < problems_number ; i++)
 					delete_node_load();
-			shownode();
 			while (1)
 			{
 				condition = check_condition(&city.people,&city.court,&city.treasury);
@@ -524,7 +521,7 @@ int main()
 				}	
 			}
 		}
-		break;
+		break;	
 	}
 	
 
