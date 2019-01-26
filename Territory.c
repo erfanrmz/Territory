@@ -25,8 +25,7 @@ struct satisfaction
 	int court;
 	int treasury;
 };
-struct saveinfo
-{
+struct saveinfo{
 	char king_name[30];
 	int condition_save;
 	int people_save;
@@ -35,7 +34,7 @@ struct saveinfo
 
 };
 char King[30];
-int condition;
+int condition = 1;
 
 //functions
 void create_node(struct problems info)    // creating new node of list
@@ -131,7 +130,6 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 		strcpy(choice_address,"problems/");
 		fscanf(address,"%s",choice_address1);
 		strcat(choice_address,choice_address1);
-		printf("%s\n",choice_address);
 		choice = fopen(choice_address,"r+");
 		i++;
 		fgets(info.problem,200,choice);
@@ -224,6 +222,33 @@ int check_condition(int *people , int *court , int *treasury) //check failing
 		return 0;
 	return 1;
 }
+void savegame(int *people , int *court , int *treasury)
+{
+	struct saveinfo save;
+	char saveinfo_adress[200];
+	FILE *saves , *info;
+	saves = fopen("saves/saves_name.txt","a+");
+	fprintf(saves,"%s\n",King);
+	fclose(saves);
+	save.condition_save = condition;
+	save.people_save = *people;
+	save.court_save = *court;
+	save.treasury_save = *treasury;
+	strcpy(save.king_name,King);
+	strcpy(saveinfo_adress,"saves/");
+	strcat(saveinfo_adress,save.king_name);
+	strcat(saveinfo_adress,".bin");
+	info = fopen(saveinfo_adress,"w+");
+	if (info == NULL)
+	{
+		printf("cant save. name is unavailbe\n");
+		return;
+	}
+	fwrite(&save, sizeof(struct saveinfo), 1, info);
+	fclose(info);
+	
+
+}
 
 int main()
 {
@@ -257,7 +282,7 @@ int main()
 				scanf(" %c",&save_choice);
 				if (save_choice == 'y' || save_choice == 'Y')
 				{
-//					savegame();
+					savegame(&city.people,&city.court,&city.treasury);
 					printf("Your game has been saved,B-Bye\n");
 				}
 				else if (save_choice == 'n' || save_choice == 'N')
@@ -277,7 +302,7 @@ int main()
 				scanf(" %c",&save_choice);
 				if (save_choice == 'y' || save_choice == 'Y')
 				{
-//					savegame();
+					savegame(&city.people,&city.court,&city.treasury);
 					printf("Your game has been saved,B-Bye\n");
 
 				}
