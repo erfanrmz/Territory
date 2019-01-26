@@ -25,7 +25,7 @@ struct satisfaction
 	int treasury;
 };
 char King[30];
-
+int condition;
 
 //functions
 void create_node(struct problems info)    // creating new node of list
@@ -48,9 +48,9 @@ void create_node(struct problems info)    // creating new node of list
 	
 	
 } 
-void delete_node(int numb)
+void delete_node(int numb) //deleting a node from list
 {
-	printf("node deleted\n\n");
+//	printf("node deleted\n\n");
 	if(numb == 0)
 	{
 		struct node *temp = head;
@@ -81,7 +81,7 @@ int random_problem() // find the problem that want to show
 	int total = 0;
 	int random,r = 0,numb = 0;
 	struct node *current = head;
-	while (current -> next != NULL)
+	while (current != NULL)
 	{
 		total += current -> data.possibility;
 		current = current -> next;
@@ -125,7 +125,6 @@ void readproblems()  //read all problems from the files that given(CHOICES.txt a
 		fscanf(choice,"%d%d%d",&info.effect1[0],&info.effect1[1],&info.effect1[2]);
 		fgets(info.decision2,200,choice);
 		fgets(info.decision2,200,choice);
-//		printf("%s",info.decision2);
 		fscanf(choice,"%d%d%d",&info.effect2[0],&info.effect2[1],&info.effect2[2]);
 		info.possibility = 3;
 		create_node(info);
@@ -148,7 +147,7 @@ void showproblem (int numb)
 	printf("2-%s",current -> data.decision2);
 
 }
-void answer_decision1 (int numb , int *people , int *court , int *treasury)
+void answer_decision1 (int numb , int *people , int *court , int *treasury) //if answer is decision one 
 {
 	int i = numb;
 	struct node *current = head;
@@ -160,11 +159,23 @@ void answer_decision1 (int numb , int *people , int *court , int *treasury)
 	*people += (current -> data.effect1[0]);
 	*court += (current -> data.effect1[1]);
 	*treasury += (current -> data.effect1[2]);
+	if (*people < 0)
+		*people = 0;
+	if (*court < 0)
+		*court = 0;
+	if (*treasury < 0)
+		*treasury = 0;
+	if (*people > 100)
+		*people = 100;
+	if (*court > 100)
+		*court = 100;
+	if (*treasury > 100)
+		*treasury = 100;
 	current -> data.possibility--;
 	if (current -> data.possibility == 0)
 		delete_node(numb);
 }
-void answer_decision2 (int numb , int *people , int *court , int *treasury)
+void answer_decision2 (int numb , int *people , int *court , int *treasury) //if answer is decision second
 {
 	int i = numb;
 	struct node *current = head;
@@ -176,9 +187,28 @@ void answer_decision2 (int numb , int *people , int *court , int *treasury)
 	*people += (current -> data.effect2[0]);
 	*court += (current -> data.effect2[1]);
 	*treasury += (current -> data.effect2[2]);
+	if (*people < 0)
+		*people = 0;
+	if (*court < 0)
+		*court = 0;
+	if (*treasury < 0)
+		*treasury = 0;
+	if (*people > 100)
+		*people = 100;
+	if (*court > 100)
+		*court = 100;
+	if (*treasury > 100)
+		*treasury = 100;
 	current -> data.possibility--;
 	if (current -> data.possibility == 0)
 		delete_node(numb);
+}
+int check_condition(int *people , int *court , int *treasury) //check failing
+{
+	int avrg = (*people + *court + *treasury)/3;
+	if (*people == 0 || *court < 0 || *treasury == 0 || avrg < 10)
+		return 0;
+	return 1;
 }
 
 int main()
@@ -191,42 +221,75 @@ int main()
 	printf("1.New Game\n2.Load Save\n");
 	scanf("%d",&menu);
 	switch(menu)
+	{
 	case 1:
-	city.people = 50;
-	city.court = 50;
-	city.treasury = 50;
-	readproblems();
-	numb = 0;
-	while (1)
-	{	
-		printf("People : %d Court : %d Treasury : %d\n",city.people,city.court,city.treasury);
-		numb = random_problem() - 1;
-		showproblem(numb);
-		scanf("%d",&answer);
-		switch(answer)
+		city.people = 50;
+		city.court = 50;
+		city.treasury = 50;
+		readproblems();
+		numb = 0;
+		while (1)
 		{
-		case 0:
-			printf("Do you want to save your game ?[Y/N]\n");
-			scanf(" %c",&save_choice);
-			if (save_choice == 'y' || save_choice == 'Y')
+			condition = check_condition(&city.people,&city.court,&city.treasury);
+			if (head == NULL)
 			{
-//				savegame();
-				printf("Your game has been saved,B-Bye\n");
-
+				printf("again \n\n");
+				readproblems();	
 			}
-			else if (save_choice == 'n' || save_choice == 'N')
-				printf("OK , GoodBye\n");
-			return 0;
-			break;
-		case 1:
-			answer_decision1(numb,&city.people,&city.court,&city.treasury);
-			break;
-		case 2:
-			answer_decision2(numb,&city.people,&city.court,&city.treasury);
-			break;
-		}	
+			printf("People : %d Court : %d Treasury : %d\n",city.people,city.court,city.treasury);
+			if (condition == 0)
+			{
+				printf("You Lost.\nDo you want to save your game ?[Y/N]\n");
+				scanf(" %c",&save_choice);
+				if (save_choice == 'y' || save_choice == 'Y')
+				{
+//					savegame();
+					printf("Your game has been saved,B-Bye\n");
+					return 0;
+				}
+				else if (save_choice == 'n' || save_choice == 'N')
+				{
+					printf("OK , GoodBye\n");
+					return 0;
+				}
+			}
+			numb = random_problem() - 1;
+			showproblem(numb);
+			scanf("%d",&answer);
+			switch(answer)
+			{
+			case 0:
+				printf("Do you want to save your game ?[Y/N]\n");
+				scanf(" %c",&save_choice);
+				if (save_choice == 'y' || save_choice == 'Y')
+				{
+//					savegame();
+					printf("Your game has been saved,B-Bye\n");
+
+				}
+				else if (save_choice == 'n' || save_choice == 'N')
+					printf("OK , GoodBye\n");
+				return 0;
+				break;
+			case 1:
+				answer_decision1(numb,&city.people,&city.court,&city.treasury);
+				break;
+			case 2:
+				answer_decision2(numb,&city.people,&city.court,&city.treasury);
+				break;
+			}
+			
+		}
+	case 2:
+		city.people = 50;
+		city.court = 50;
+		city.treasury = 50;
+		readproblems();
+		printf("%s",head -> data.problem);
+
 	}
 	
+
 	
 
 
